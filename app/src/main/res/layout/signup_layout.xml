@@ -20,8 +20,10 @@
                 android:id="@+id/backButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="12dp"
                 android:layout_marginTop="40dp"
-                app:layout_constraintStart_toStartOf="@+id/guideline2"
+                android:layout_marginLeft="10dp"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_back_button" />
 
