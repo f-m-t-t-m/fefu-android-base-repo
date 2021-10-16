@@ -3,4 +3,6 @@
     <string name="slogan">Пожалуй лучший \n фитнес трекер в ДВФУ</string>
     <string name="created">Созданный студентами 2-ого курса</string>
     <string name="confirm">Нажимая на кнопку, вы соглашаетесь с политикой конфиденциальности и обработки персональных данных, а также принимаете пользовательское соглашение </string>
+    <string name="menu_activity_tracker">Активность</string>
+    <string name="menu_profile">Профиль</string>
 </resources>
