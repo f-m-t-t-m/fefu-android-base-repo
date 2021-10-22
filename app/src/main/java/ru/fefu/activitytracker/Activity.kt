@@ -8,30 +8,28 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import ru.fefu.activitytracker.databinding.ActivityLayoutBinding
 
-class FragmentInfo(val buttonId: Int, private val _newInstance: Fragment, val tag: String) {
-    fun newInstance(): Fragment {
-        return _newInstance
-    }
-}
+data class FragmentInfo (
+    val buttonId: Int,
+    val newInstance: () -> Fragment,
+    val tag: String,
+)
 
 class Activity : AppCompatActivity() {
     private lateinit var binding: ActivityLayoutBinding
 
-    val fragments = listOf<FragmentInfo>(
-        FragmentInfo(R.id.action_activity_tracker, ActivityTrackerFragment().newInstance(), "tracking"),
-        FragmentInfo(R.id.action_profile, ProfileFragment().newInstance(), "profile")
+    private val fragments = listOf<FragmentInfo>(
+        FragmentInfo(R.id.action_activity_tracker, ActivityTrackerFragment::newInstance, "tracking"),
+        FragmentInfo(R.id.action_profile, ProfileFragment::newInstance, "profile")
     )
 
-    private var activeFragment = fragments[0]
-    private var notActiveFragment = fragments[1]
-
     private fun replaceFragment(buttonId: Int) {
-        if (activeFragment.buttonId == buttonId) {
+        val active = supportFragmentManager.fragments.firstOrNull{!it.isHidden}
+        val fragmentToShowInfo = fragments.first { it.buttonId == buttonId }
+        val fragmentToShow = supportFragmentManager.findFragmentByTag(fragmentToShowInfo.tag)
+
+        if (active == fragmentToShow) {
             return
         }
-
-        val active = supportFragmentManager.findFragmentByTag(activeFragment.tag)
-        val notActive = supportFragmentManager.findFragmentByTag(notActiveFragment.tag)
 
         if (active != null) {
             supportFragmentManager.beginTransaction().apply {
@@ -40,20 +38,19 @@ class Activity : AppCompatActivity() {
             }
         }
 
-        if (notActive != null) {
+        if (fragmentToShow != null) {
             supportFragmentManager.beginTransaction().apply {
-                show(notActive)
+                show(fragmentToShow)
                 commit()
             }
         }
 
         else {
             supportFragmentManager.beginTransaction().apply {
-                add(R.id.fragment_container_view, notActiveFragment.newInstance(), notActiveFragment.tag)
+                add(R.id.fragment_container_view, fragmentToShowInfo.newInstance(), fragmentToShowInfo.tag)
                 commit()
             }
         }
-        activeFragment = notActiveFragment.also { notActiveFragment = activeFragment }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +62,7 @@ class Activity : AppCompatActivity() {
             supportFragmentManager.beginTransaction().apply {
                 add(
                     R.id.fragment_container_view,
-                    ActivityTrackerFragment().newInstance(),
+                    ActivityTrackerFragment.newInstance(),
                 "tracking"
                 )
                 commit()

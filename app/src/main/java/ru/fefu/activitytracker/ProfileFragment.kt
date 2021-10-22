@@ -13,8 +13,10 @@ class ProfileFragment : Fragment() {
 
     private val binding get() = _binding!!
 
-    fun newInstance(): ProfileFragment {
-        return ProfileFragment()
+    companion object {
+        fun newInstance(): ProfileFragment {
+            return ProfileFragment()
+        }
     }
 
     override fun onCreateView(
