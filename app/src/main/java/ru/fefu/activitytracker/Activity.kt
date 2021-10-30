@@ -18,7 +18,7 @@ class Activity : AppCompatActivity() {
     private lateinit var binding: ActivityLayoutBinding
 
     private val fragments = listOf<FragmentInfo>(
-        FragmentInfo(R.id.action_activity_tracker, ActivityTrackerFragment::newInstance, "tracking"),
+        FragmentInfo(R.id.action_activity_tracker, ActivityTabs::newInstance, ActivityTabs.tag),
         FragmentInfo(R.id.action_profile, ProfileFragment::newInstance, "profile")
     )
 
@@ -62,8 +62,8 @@ class Activity : AppCompatActivity() {
             supportFragmentManager.beginTransaction().apply {
                 add(
                     R.id.fragment_container_view,
-                    ActivityTrackerFragment.newInstance(),
-                "tracking"
+                    ActivityTabs.newInstance(),
+                    ActivityTabs.tag,
                 )
                 commit()
             }
@@ -71,6 +71,21 @@ class Activity : AppCompatActivity() {
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
             replaceFragment(it.itemId)
             true
+        }
+    }
+
+    override fun onBackPressed() {
+        val active = supportFragmentManager.fragments.firstOrNull{!it.isHidden}!!
+        val childManager = active.childFragmentManager
+
+        if (supportFragmentManager.backStackEntryCount != 0) {
+            supportFragmentManager.popBackStack()
+        }
+        else if (childManager.backStackEntryCount != 0) {
+            childManager.popBackStack()
+        }
+        else {
+            super.onBackPressed()
         }
     }
 }

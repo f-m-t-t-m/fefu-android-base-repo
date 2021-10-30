@@ -1,5 +1,6 @@
 package ru.fefu.activitytracker
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -92,26 +93,17 @@ class ActivityMyTrackerFragment : Fragment(R.layout.activity_fragment_tracking_m
 
     private fun changeFragment(position: Int) {
         if (position in data_activities.indices) {
-            val manager = parentFragment?.parentFragmentManager
-            val active = manager?.fragments?.firstOrNull{!it.isHidden}
+            val manager = activity?.supportFragmentManager?.findFragmentByTag(ActivityTabs.tag)?.childFragmentManager
             manager?.beginTransaction()?.apply {
-                if (active != null) {
-                    hide(active)
-                }
-                val hidden = manager.findFragmentByTag(MyActivityInfo.tag)
-                if (hidden != null) {
-                    show(hidden)
-                }
-                else {
-                    add(
-                        R.id.fragment_container_view,
-                        MyActivityInfo.newInstance(),
-                        MyActivityInfo.tag
-                    )
-                }
+                manager.fragments.forEach(::hide)
+                add (
+                    R.id.activity_fragment_container,
+                    MyActivityInfo.newInstance(),
+                    MyActivityInfo.tag,
+                        )
                 addToBackStack(null)
                 commit()
-            }
+           }
         }
     }
 

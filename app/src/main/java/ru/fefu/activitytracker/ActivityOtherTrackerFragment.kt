@@ -74,28 +74,20 @@ class ActivityOtherTrackerFragment : Fragment(R.layout.activity_fragment_trackin
 
     private fun changeFragment(position: Int) {
         if (position in data_activities.indices) {
-            val manager = parentFragment?.parentFragmentManager
-            val active = manager?.fragments?.firstOrNull{!it.isHidden}
+            val manager = activity?.supportFragmentManager?.findFragmentByTag(ActivityTabs.tag)?.childFragmentManager
             manager?.beginTransaction()?.apply {
-                if (active != null) {
-                    hide(active)
-                }
-                val hidden = manager.findFragmentByTag(UserActivityInfo.tag)
-                if (hidden != null) {
-                    show(hidden)
-                }
-                else {
-                    add(
-                        R.id.fragment_container_view,
-                        UserActivityInfo.newInstance(),
-                        UserActivityInfo.tag
-                    )
-                }
+                manager.fragments.forEach(::hide)
+                add (
+                    R.id.activity_fragment_container,
+                    MyActivityInfo.newInstance(),
+                    MyActivityInfo.tag,
+                )
                 addToBackStack(null)
                 commit()
             }
         }
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
