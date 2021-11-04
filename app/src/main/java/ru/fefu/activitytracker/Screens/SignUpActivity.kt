@@ -1,6 +1,5 @@
-package ru.fefu.activitytracker
+package ru.fefu.activitytracker.Screens
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
@@ -9,18 +8,13 @@ import android.widget.ImageView
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ClickableSpan
-import android.text.style.UnderlineSpan
 
-import android.text.Spannable
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
-import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-
-
+import ru.fefu.activitytracker.R
 
 
 class SignUpActivity : Activity() {

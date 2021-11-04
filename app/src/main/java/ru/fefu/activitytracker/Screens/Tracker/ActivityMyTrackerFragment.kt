@@ -1,6 +1,5 @@
-package ru.fefu.activitytracker
+package ru.fefu.activitytracker.Screens.Tracker
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,8 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import ru.fefu.activitytracker.Adapters.ActivityListAdapter
+import ru.fefu.activitytracker.Models.ActivityData
+import ru.fefu.activitytracker.Models.DateData
+import ru.fefu.activitytracker.R
 import ru.fefu.activitytracker.databinding.ActivityFragmentTrackingMyBinding
-import java.time.Duration
 import java.time.LocalDateTime
 
 class ActivityMyTrackerFragment : Fragment(R.layout.activity_fragment_tracking_my) {
@@ -89,7 +92,7 @@ class ActivityMyTrackerFragment : Fragment(R.layout.activity_fragment_tracking_m
         }
     }
 
-    private val adapter = ListAdapter(data_activities)
+    private val adapter = ActivityListAdapter(data_activities)
 
     private fun changeFragment(position: Int) {
         if (position in data_activities.indices) {
@@ -115,8 +118,18 @@ class ActivityMyTrackerFragment : Fragment(R.layout.activity_fragment_tracking_m
         recycleView.layoutManager = LinearLayoutManager(requireContext())
         recycleView.adapter = adapter
         adapter.setItemClickListener { changeFragment(it) }
+        binding.startNewActivity.setOnClickListener{
+            val manager = activity?.supportFragmentManager?.findFragmentByTag(ActivityTabs.tag)?.childFragmentManager
+            val navbar = activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+            navbar?.visibility = View.GONE
+            manager?.beginTransaction()?.apply {
+                manager?.fragments.forEach(::hide)
+                add(R.id.activity_fragment_container, NewActivityFragment.newInstance(), NewActivityFragment.tag)
+                addToBackStack(null)
+                commit()
+            }
+        }
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

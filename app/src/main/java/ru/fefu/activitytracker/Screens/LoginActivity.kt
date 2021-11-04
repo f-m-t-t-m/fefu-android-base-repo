@@ -1,9 +1,10 @@
-package ru.fefu.activitytracker
+package ru.fefu.activitytracker.Screens
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
+import ru.fefu.activitytracker.R
 
 class LoginActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
