@@ -14,29 +14,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_back_btn"
-        app:title="Title" />
-
-    <ImageView
-        android:id="@+id/delete_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingRight="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toStartOf="@+id/share_btn"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        app:srcCompat="@drawable/ic_delete_btn" />
-
-    <ImageView
-        android:id="@+id/share_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingRight="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_share_btn" />
-    />
+        app:title="Title"
+        app:menu="@menu/toolbar_menu"/>
 
     <View
         android:id="@+id/viewLine"

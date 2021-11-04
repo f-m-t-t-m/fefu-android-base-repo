@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     android:paddingBottom="16dp"
-    android:background="@drawable/shadow">
+    android:background="@drawable/shadow"
+    android:elevation="10dp">
 
     <TextView
         android:id="@+id/distance"
