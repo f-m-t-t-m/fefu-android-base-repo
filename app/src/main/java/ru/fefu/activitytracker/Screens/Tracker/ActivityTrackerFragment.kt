@@ -1,4 +1,4 @@
-package ru.fefu.activitytracker
+package ru.fefu.activitytracker.Screens.Tracker
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
+import ru.fefu.activitytracker.Adapters.PagerAdapter
 import ru.fefu.activitytracker.databinding.ActivityFragmentTrackingBinding
 
 

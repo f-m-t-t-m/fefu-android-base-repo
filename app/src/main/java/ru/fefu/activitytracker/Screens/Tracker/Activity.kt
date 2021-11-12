@@ -1,11 +1,12 @@
 package ru.fefu.activitytracker
 
-import android.app.Activity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
+import ru.fefu.activitytracker.Screens.Tracker.ActivityTabs
+import ru.fefu.activitytracker.Screens.Tracker.NewActivityFragment
+import ru.fefu.activitytracker.Screens.Tracker.ProfileFragment
 import ru.fefu.activitytracker.databinding.ActivityLayoutBinding
 
 data class FragmentInfo (
@@ -19,7 +20,7 @@ class Activity : AppCompatActivity() {
 
     private val fragments = listOf<FragmentInfo>(
         FragmentInfo(R.id.action_activity_tracker, ActivityTabs::newInstance, ActivityTabs.tag),
-        FragmentInfo(R.id.action_profile, ProfileFragment::newInstance, "profile")
+        FragmentInfo(R.id.action_profile, ProfileFragment::newInstance, ProfileFragment.tag)
     )
 
     private fun replaceFragment(buttonId: Int) {
@@ -78,6 +79,10 @@ class Activity : AppCompatActivity() {
         val active = supportFragmentManager.fragments.firstOrNull{!it.isHidden}!!
         val childManager = active.childFragmentManager
 
+        if (binding.bottomNavigationView.visibility == View.GONE) {
+            if (childManager.findFragmentByTag(NewActivityFragment.tag)?.isVisible == true)
+                binding.bottomNavigationView.visibility = View.VISIBLE
+        }
         if (supportFragmentManager.backStackEntryCount != 0) {
             supportFragmentManager.popBackStack()
         }

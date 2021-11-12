@@ -1,19 +1,19 @@
-package ru.fefu.activitytracker
+package ru.fefu.activitytracker.Adapters
 
 import android.annotation.SuppressLint
-import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import ru.fefu.activitytracker.Models.ActivityData
+import ru.fefu.activitytracker.Models.DateData
+import ru.fefu.activitytracker.R
+import ru.fefu.activitytracker.Models.UserActivityData
 import java.time.Duration
 import java.time.LocalDateTime
 
-class ListAdapter(private val activities: List<Any>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ActivityListAdapter(private val activities: List<Any>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var ItemClickListener: (Int) -> Unit = {}
 
