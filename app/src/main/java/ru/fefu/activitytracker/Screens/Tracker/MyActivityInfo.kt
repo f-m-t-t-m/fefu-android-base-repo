@@ -34,36 +34,14 @@ class MyActivityInfo(private val info: ActivityData): Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.distance.text = info.distance
-        var startTime = ""
-        if (info.startDate.hour.toString().length == 1) {
-            startTime += '0' + info.startDate.hour.toString() + ':'
-        } else {
-            startTime += info.startDate.hour.toString() + ':'
-        }
-        if (info.startDate.minute.toString().length == 1) {
-            startTime += '0' + info.startDate.hour.toString()
-        } else {
-            startTime += info.startDate.minute.toString()
-        }
+        var startTime = "%02d".format(info.startDate.hour) + ":" + "%02d".format(info.startDate.minute)
 
-        var endTime = ""
-        if (info.endDate.hour.toString().length == 1) {
-            endTime += '0' + info.endDate.hour.toString() + ':'
-        } else {
-            endTime += info.endDate.hour.toString() + ':'
-        }
-        if (info.endDate.minute.toString().length == 1) {
-            endTime += '0' + info.endDate.hour.toString()
-        } else {
-            endTime += info.endDate.minute.toString()
-        }
+        var endTime = "%02d".format(info.endDate.hour) + ":" + "%02d".format(info.endDate.minute)
 
         binding.startTime.text = startTime
         binding.finishTime.text = endTime
 
-        if (LocalDateTime.now().year == info.endDate.year &&
-            LocalDateTime.now().monthValue == info.endDate.monthValue &&
-            LocalDateTime.now().dayOfMonth == info.endDate.dayOfMonth) {
+        if (LocalDateTime.now().equals(info.endDate)) {
             binding.date.text = Duration.between(info.endDate, LocalDateTime.now()).toHours().toString() +
                     ActivityListAdapter.getNoun(
                         Duration.between(
