@@ -1,24 +1,18 @@
 package ru.fefu.activitytracker.Adapters
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import ru.fefu.activitytracker.Enums.ActivitiesEnum
 import ru.fefu.activitytracker.Models.NewActivityData
-import ru.fefu.activitytracker.Models.UserActivityData
 import ru.fefu.activitytracker.R
 
-class NewActivityListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NewActivityListAdapter(private val activities: List<NewActivityData>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var selected = -1
-
-    private var activities = listOf<NewActivityData>(
-        NewActivityData("Велосипед", false),
-        NewActivityData("Бег", false ),
-        NewActivityData("Шаг", false ))
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.new_activity_item, parent, false)
@@ -45,7 +39,6 @@ class NewActivityListAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 itemView.setBackgroundResource(R.drawable.border)
             }
             itemView.setOnClickListener {
-                Log.d("select", activities.toString())
                 activities[adapterPosition].isSelected = true
                 if (selected != -1 && selected != adapterPosition) {
                     activities[selected].isSelected = false
