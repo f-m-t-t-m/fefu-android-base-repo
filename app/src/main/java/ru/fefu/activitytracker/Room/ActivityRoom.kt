@@ -10,6 +10,8 @@ data class ActivityRoom(
         @ColumnInfo(name = "activity_type") val type: Int,
         @ColumnInfo(name = "date_start") val dateStart: Long,
         @ColumnInfo(name = "date_end") val dateEnd: Long,
+        @ColumnInfo(name = "distance") val distance: Double,
         @ColumnInfo(name = "latitude") val latitude: Double,
-        @ColumnInfo(name = "longitude") val longitude: Double
+        @ColumnInfo(name = "longitude") val longitude: Double,
+        @ColumnInfo(name = "finished") val finished: Int
 )

@@ -1,13 +1,19 @@
-package ru.fefu.activitytracker
+package ru.fefu.activitytracker.Screens.Tracker
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import ru.fefu.activitytracker.R
+import ru.fefu.activitytracker.Screens.Tracker.ActivityMyTrackerFragment
 import ru.fefu.activitytracker.Screens.Tracker.ActivityTabs
 import ru.fefu.activitytracker.Screens.Tracker.NewActivityFragment
 import ru.fefu.activitytracker.Screens.Tracker.ProfileFragment
 import ru.fefu.activitytracker.databinding.ActivityLayoutBinding
+import java.io.File
 
 data class FragmentInfo (
     val buttonId: Int,
@@ -80,17 +86,30 @@ class Activity : AppCompatActivity() {
         val childManager = active.childFragmentManager
 
         if (binding.bottomNavigationView.visibility == View.GONE) {
-            if (childManager.findFragmentByTag(NewActivityFragment.tag)?.isVisible == true)
                 binding.bottomNavigationView.visibility = View.VISIBLE
         }
-        if (supportFragmentManager.backStackEntryCount != 0) {
-            supportFragmentManager.popBackStack()
+
+        if (childManager.backStackEntryCount != 0) {
+            if (childManager.findFragmentByTag(StartedActivityFragment.tag)?.isVisible == true
+                && intent?.getIntExtra("notification", 0) == 0) {
+                childManager.popBackStack("new_active", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            }
+            else {
+                childManager.popBackStack()
+            }
         }
-        else if (childManager.backStackEntryCount != 0) {
-            childManager.popBackStack()
+        else if (supportFragmentManager.backStackEntryCount != 0) {
+            supportFragmentManager.popBackStack()
         }
         else {
             super.onBackPressed()
         }
+        intent.putExtra("notification", 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        val fragment = supportFragmentManager.findFragmentByTag(ActivityTabs.tag)
+        fragment?.onActivityResult(requestCode, resultCode, data)
     }
 }
