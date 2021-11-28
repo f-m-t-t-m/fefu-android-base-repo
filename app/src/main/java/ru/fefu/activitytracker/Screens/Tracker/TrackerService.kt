@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.CountDownTimer
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -20,12 +21,14 @@ import androidx.core.app.NotificationCompat
 import org.osmdroid.util.GeoPoint
 import ru.fefu.activitytracker.App
 import ru.fefu.activitytracker.R
+import java.util.*
 
 class TrackerService : Service() {
     override fun onBind(p0: Intent?): IBinder? = null
 
     private var id: Int = -1
     private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
+    private val timer = Timer()
 
     companion object {
         var coordinatesList = mutableListOf<GeoPoint>()
@@ -45,7 +48,9 @@ class TrackerService : Service() {
             return START_NOT_STICKY
         }
         else if (intent?.action == "start_service") {
-            id = intent?.getIntExtra("activity_id", -1)!!
+            val time = intent.getDoubleExtra("timeExtra", 0.0)
+            timer.scheduleAtFixedRate(TimeTask(time), 0, 1000)
+            id = intent.getIntExtra("activity_id", -1)
             startLocationUpdates(id)
             super.onStartCommand(intent, flags, startId)
             return START_REDELIVER_INTENT
@@ -53,6 +58,10 @@ class TrackerService : Service() {
         return START_NOT_STICKY
     }
 
+    override fun onDestroy() {
+        timer.cancel()
+        super.onDestroy()
+    }
 
     @SuppressLint("UnspecifiedImmutableFlag")
     private fun showNotification() {
@@ -127,6 +136,16 @@ class TrackerService : Service() {
                 distance += locationA.distanceTo(locationB)
             }
             App.INSTANCE.db.activityDao().updateCoordinates(lastLocation.latitude, lastLocation.longitude, id)
+        }
+    }
+
+    private inner class TimeTask(private var time: Double): TimerTask() {
+        override fun run() {
+            val intent = Intent("timerUpdated")
+            time++
+            Log.d("timeService", time.toString())
+            intent.putExtra("timeExtra", time)
+            sendBroadcast(intent)
         }
     }
 }

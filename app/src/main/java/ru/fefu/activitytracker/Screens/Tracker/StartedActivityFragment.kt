@@ -1,7 +1,9 @@
 package ru.fefu.activitytracker.Screens.Tracker
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
@@ -27,10 +29,12 @@ import ru.fefu.activitytracker.R
 import ru.fefu.activitytracker.Room.ActivityRoom
 import ru.fefu.activitytracker.databinding.StartedActivityFragmentBinding
 import org.osmdroid.views.overlay.Polyline
+import kotlin.math.roundToInt
 
 class StartedActivityFragment(private val id_: Int): Fragment() {
     private var _binding: StartedActivityFragmentBinding? = null
     private val binding get() = _binding!!
+    private var time = 0.0
 
     private val polyline by lazy {
         Polyline().apply {
@@ -53,8 +57,25 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        activity?.registerReceiver(updateTime, IntentFilter("timerUpdated"))
         _binding = StartedActivityFragmentBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            time = intent?.getDoubleExtra("timeExtra", 0.0)!!
+            Log.d("timeFragment", time.toString())
+            binding.time.text = DoubleToTime(time)
+        }
+    }
+
+    private fun DoubleToTime(time: Double): String {
+        val result = time.roundToInt()
+        val hours = result % 86400 / 3600
+        val minutes = result % 86400 % 3600 / 60
+        val seconds = result % 86400 % 3600 % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -119,7 +140,8 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        activity?.unregisterReceiver(updateTime)
         _binding = null
+        super.onDestroyView()
     }
 }

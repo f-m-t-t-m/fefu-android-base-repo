@@ -34,6 +34,7 @@ class NewActivityFragment: Fragment() {
     private val binding get() = _binding!!
     private var activities = mutableListOf<NewActivityData>()
     private lateinit var adapter: NewActivityListAdapter
+    private lateinit var serviceIntent: Intent
 
     private val polyline by lazy {
         Polyline().apply {
@@ -102,10 +103,11 @@ class NewActivityFragment: Fragment() {
                         0
                     )
                 )
-                val intent = Intent(this.requireActivity(), TrackerService::class.java)
-                intent.putExtra("activity_id", id_.toInt())
-                intent.action = "start_service"
-                this.requireActivity().startService(intent)
+                val serviceIntent = Intent(this.requireActivity(), TrackerService::class.java)
+                serviceIntent.putExtra("activity_id", id_.toInt())
+                serviceIntent.action = "start_service"
+                serviceIntent.putExtra("timeExtra", 0.0)
+                this.requireActivity().startService(serviceIntent)
 
                 val manager =
                     activity?.supportFragmentManager?.findFragmentByTag(ActivityTabs.tag)?.childFragmentManager
