@@ -58,6 +58,7 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         activity?.registerReceiver(updateTime, IntentFilter("timerUpdated"))
+        activity?.registerReceiver(updateDistance, IntentFilter("distanceUpdated"))
         _binding = StartedActivityFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -67,6 +68,24 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
             time = intent?.getDoubleExtra("timeExtra", 0.0)!!
             Log.d("timeFragment", time.toString())
             binding.time.text = DoubleToTime(time)
+        }
+    }
+
+    private val updateDistance: BroadcastReceiver = object :BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            var newDistance = intent?.getDoubleExtra("distance", 0.0)!!
+            val longitude = intent.getDoubleExtra("longitude", 0.0)
+            val latitude = intent.getDoubleExtra("latitude", 0.0)
+            if (latitude != 0.0 && longitude != 0.0) {
+                polyline.addPoint(GeoPoint(latitude, longitude))
+            }
+            if (newDistance > 1000) {
+                newDistance /= 1000
+                binding.distance.text = "%.1f".format(newDistance) + " км"
+            }
+            else {
+                binding.distance.text = "%.0f".format(newDistance) + " м"
+            }
         }
     }
 
@@ -94,19 +113,6 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
             val cancelIntent = Intent(this.requireActivity(), TrackerService::class.java)
             cancelIntent.action = "stop_service"
             this.requireActivity().startService(cancelIntent)
-        }
-
-        App.INSTANCE.db.activityDao().getByIdLiveData(id_).observe(viewLifecycleOwner) {
-            if (it.latitude != 0.0 && it.longitude != 0.0) {
-                polyline.addPoint(GeoPoint(it.latitude, it.longitude))
-                if (TrackerService.distance > 1000) {
-                    val distance = TrackerService.distance/1000
-                    binding.distance.text = "%.1f".format(distance) + " км"
-                }
-                else {
-                    binding.distance.text = "%.0f".format(TrackerService.distance) + " м"
-                }
-            }
         }
     }
 
@@ -141,6 +147,7 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
 
     override fun onDestroyView() {
         activity?.unregisterReceiver(updateTime)
+        activity?.unregisterReceiver(updateDistance)
         _binding = null
         super.onDestroyView()
     }

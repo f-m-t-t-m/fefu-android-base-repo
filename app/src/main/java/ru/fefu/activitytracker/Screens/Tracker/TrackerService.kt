@@ -29,10 +29,10 @@ class TrackerService : Service() {
     private var id: Int = -1
     private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
     private val timer = Timer()
+    private var distance = 0.0
 
     companion object {
         var coordinatesList = mutableListOf<GeoPoint>()
-        var distance:Double= 0.0
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -41,7 +41,7 @@ class TrackerService : Service() {
             coordinatesList.clear()
             distance = 0.0
             val activityIntent = Intent(this, Activity::class.java)
-            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(activityIntent)
             stopForeground(true)
             stopSelf()
@@ -135,6 +135,11 @@ class TrackerService : Service() {
                 locationB.longitude = coordinatesList[coordinatesList.size-1].longitude
                 distance += locationA.distanceTo(locationB)
             }
+            val intent = Intent("distanceUpdated")
+            intent.putExtra("distance", distance)
+            intent.putExtra("longitude", lastLocation.longitude)
+            intent.putExtra("latitude", lastLocation.latitude)
+            sendBroadcast(intent)
             App.INSTANCE.db.activityDao().updateCoordinates(lastLocation.latitude, lastLocation.longitude, id)
         }
     }
