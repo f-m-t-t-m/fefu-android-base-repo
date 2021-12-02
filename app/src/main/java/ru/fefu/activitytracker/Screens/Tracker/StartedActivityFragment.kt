@@ -34,7 +34,7 @@ import kotlin.math.roundToInt
 class StartedActivityFragment(private val id_: Int): Fragment() {
     private var _binding: StartedActivityFragmentBinding? = null
     private val binding get() = _binding!!
-    private var time = 0.0
+    private var distance = 0.0
 
     private val polyline by lazy {
         Polyline().apply {
@@ -58,34 +58,15 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         activity?.registerReceiver(updateTime, IntentFilter("timerUpdated"))
-        activity?.registerReceiver(updateDistance, IntentFilter("distanceUpdated"))
         _binding = StartedActivityFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            time = intent?.getDoubleExtra("timeExtra", 0.0)!!
+            val time = intent?.getDoubleExtra("timeExtra", 0.0)!!
             Log.d("timeFragment", time.toString())
             binding.time.text = DoubleToTime(time)
-        }
-    }
-
-    private val updateDistance: BroadcastReceiver = object :BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            var newDistance = intent?.getDoubleExtra("distance", 0.0)!!
-            val longitude = intent.getDoubleExtra("longitude", 0.0)
-            val latitude = intent.getDoubleExtra("latitude", 0.0)
-            if (latitude != 0.0 && longitude != 0.0) {
-                polyline.addPoint(GeoPoint(latitude, longitude))
-            }
-            if (newDistance > 1000) {
-                newDistance /= 1000
-                binding.distance.text = "%.1f".format(newDistance) + " км"
-            }
-            else {
-                binding.distance.text = "%.0f".format(newDistance) + " м"
-            }
         }
     }
 
@@ -111,8 +92,21 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
         }
         binding.finishBtn.setOnClickListener {
             val cancelIntent = Intent(this.requireActivity(), TrackerService::class.java)
+            cancelIntent.putExtra("activity_id", id_)
             cancelIntent.action = "stop_service"
             this.requireActivity().startService(cancelIntent)
+        }
+        App.INSTANCE.db.activityDao().getByIdLiveData(id_).observe(viewLifecycleOwner) {
+            if (it.coordinates.size > 0) {
+                polyline.addPoint(GeoPoint(it.coordinates.last().first, it.coordinates.last().second))
+            }
+            if (it.distance > 1000) {
+                val distance = it.distance / 1000
+                binding.distance.text = "%.1f км".format(distance)
+            }
+            else {
+                binding.distance.text = "%.0f м".format(it.distance)
+            }
         }
     }
 
@@ -129,9 +123,17 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
                 false
             )
         }
-        val geoPoints = TrackerService.coordinatesList
-        for(point in geoPoints) {
-            polyline.addPoint(point)
+        val activityInstance = App.INSTANCE.db.activityDao().getById(id_)
+        val coordinatesList: List<Pair<Double, Double>> = activityInstance.coordinates
+        if (activityInstance.distance > 1000) {
+            val distance = activityInstance .distance / 1000
+            binding.distance.text = "%.1f км".format(distance)
+        }
+        else {
+            binding.distance.text = "%.0f м".format(activityInstance .distance)
+        }
+        for(point in coordinatesList) {
+            polyline.addPoint(GeoPoint(point.first, point.second))
         }
         binding.mapView.overlayManager.add(polyline)
     }
@@ -147,7 +149,6 @@ class StartedActivityFragment(private val id_: Int): Fragment() {
 
     override fun onDestroyView() {
         activity?.unregisterReceiver(updateTime)
-        activity?.unregisterReceiver(updateDistance)
         _binding = null
         super.onDestroyView()
     }

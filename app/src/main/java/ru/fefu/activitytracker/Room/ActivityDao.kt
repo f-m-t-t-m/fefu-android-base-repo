@@ -23,11 +23,11 @@ interface ActivityDao {
     @Insert
     fun insert(activity: ActivityRoom): Long
 
-    @Query("UPDATE ActivityRoom SET finished=1, date_end=:date_end, distance=:distance WHERE id=:id")
-    fun finishActivity(date_end: Long, distance: Double, id: Int)
+    @Query("UPDATE ActivityRoom SET finished=1, date_end=:date_end WHERE id=:id")
+    fun finishActivity(date_end: Long, id: Int)
 
-    @Query("UPDATE ActivityRoom SET latitude=:latitude, longitude=:longitude WHERE id=:id")
-    fun updateCoordinates(latitude: Double, longitude: Double, id: Int)
+    @Query("UPDATE ActivityRoom SET coordinates=:coordinates, distance=:distance  WHERE id=:id")
+    fun updateCoordinates(coordinates: List<Pair<Double, Double>>, distance: Double, id: Int)
 
     @Query("DELETE FROM ActivityRoom")
     fun deleteAll()

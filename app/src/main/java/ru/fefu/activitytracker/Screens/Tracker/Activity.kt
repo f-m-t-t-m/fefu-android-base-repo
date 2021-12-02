@@ -85,6 +85,12 @@ class Activity : AppCompatActivity() {
         }
     }
 
+//    override fun onNewIntent(intent: Intent?) {
+//        super.onNewIntent(intent)
+//        setIntent(intent)
+//
+//    }
+
     override fun onBackPressed() {
         val active = supportFragmentManager.fragments.firstOrNull{!it.isHidden}!!
         val childManager = active.childFragmentManager

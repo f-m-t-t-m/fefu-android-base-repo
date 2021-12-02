@@ -30,22 +30,21 @@ class TrackerService : Service() {
     private val fusedLocationClient by lazy { LocationServices.getFusedLocationProviderClient(this) }
     private val timer = Timer()
     private var distance = 0.0
-
-    companion object {
-        var coordinatesList = mutableListOf<GeoPoint>()
-    }
+    lateinit var callback: LocationCallback
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == "stop_service") {
-            App.INSTANCE.db.activityDao().finishActivity(System.currentTimeMillis(), distance, id)
-            coordinatesList.clear()
-            distance = 0.0
+            id = intent.getIntExtra("activity_id", -2)
+            Log.d("id_", id.toString())
+            App.INSTANCE.db.activityDao().finishActivity(System.currentTimeMillis(), id)
             val activityIntent = Intent(this, Activity::class.java)
             activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(activityIntent)
+            if (this::callback.isInitialized) {
+                fusedLocationClient.removeLocationUpdates(callback)
+            }
             stopForeground(true)
             stopSelf()
-            return START_NOT_STICKY
         }
         else if (intent?.action == "start_service") {
             val time = intent.getDoubleExtra("timeExtra", 0.0)
@@ -63,7 +62,6 @@ class TrackerService : Service() {
         super.onDestroy()
     }
 
-    @SuppressLint("UnspecifiedImmutableFlag")
     private fun showNotification() {
         createChannel()
         val activityIntent = Intent(this, Activity::class.java)
@@ -74,12 +72,13 @@ class TrackerService : Service() {
             getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         }
         val cancelIntent = Intent(this, TrackerService::class.java)
+        cancelIntent.putExtra("activity_id", id)
         cancelIntent.action = "stop_service"
         val cancelPendingIntent = PendingIntent.getService(
             this,
             137,
             cancelIntent,
-            0
+            PendingIntent.FLAG_UPDATE_CURRENT
         )
         val notification = NotificationCompat.Builder(this, "tracker_service_id")
             .setContentTitle("Hello")
@@ -103,7 +102,7 @@ class TrackerService : Service() {
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(10000L)
             .setSmallestDisplacement(10f)
-        val callback = MyActivityLocationCallback(id)
+        callback = MyActivityLocationCallback(id)
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -125,22 +124,19 @@ class TrackerService : Service() {
     inner class MyActivityLocationCallback(private val id: Int): LocationCallback() {
         override fun onLocationResult(result: LocationResult?) {
             val lastLocation = result?.lastLocation ?: return
-            coordinatesList.add(GeoPoint(lastLocation.latitude, lastLocation.longitude))
+            val coordinatesList = App.INSTANCE.db.activityDao().getById(id).coordinates.toMutableList()
+            coordinatesList.add(lastLocation.latitude to lastLocation.longitude)
             if (coordinatesList.size > 1) {
                 val locationA = Location("A")
-                locationA.latitude = coordinatesList[coordinatesList.size-2].latitude
-                locationA.longitude = coordinatesList[coordinatesList.size-2].longitude
+                locationA.latitude = coordinatesList[coordinatesList.size-2].first
+                locationA.longitude = coordinatesList[coordinatesList.size-2].second
                 val locationB = Location("B")
-                locationB.latitude = coordinatesList[coordinatesList.size-1].latitude
-                locationB.longitude = coordinatesList[coordinatesList.size-1].longitude
+                locationB.latitude = coordinatesList[coordinatesList.size-1].first
+                locationB.longitude = coordinatesList[coordinatesList.size-1].second
                 distance += locationA.distanceTo(locationB)
             }
-            val intent = Intent("distanceUpdated")
-            intent.putExtra("distance", distance)
-            intent.putExtra("longitude", lastLocation.longitude)
-            intent.putExtra("latitude", lastLocation.latitude)
-            sendBroadcast(intent)
-            App.INSTANCE.db.activityDao().updateCoordinates(lastLocation.latitude, lastLocation.longitude, id)
+            Log.d("distance", distance.toString())
+            App.INSTANCE.db.activityDao().updateCoordinates(coordinatesList, distance, id)
         }
     }
 
