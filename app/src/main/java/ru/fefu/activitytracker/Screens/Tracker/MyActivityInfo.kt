@@ -53,6 +53,13 @@ class MyActivityInfo(private val info: ActivityData): Fragment() {
         }
         else binding.date.text = info.endDate.dayOfMonth.toString() + '.'+
                 info.endDate.monthValue.toString() + '.' + info.endDate.year.toString()
+        val duration_ = Duration.between(info.endDate, info.startDate);
+        var seconds: Long = Math.abs(duration_.getSeconds())
+        val hours = seconds / 3600
+        seconds -= hours * 3600
+        val minutes = seconds / 60
+        if (hours > 0) binding.duration.text = "%d ч %d мин".format(hours, minutes)
+        else binding.duration.text = "%d мин".format(minutes)
 
         binding.toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
