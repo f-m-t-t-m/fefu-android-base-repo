@@ -1,22 +1,14 @@
 package ru.fefu.activitytracker.Screens.Tracker
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import ru.fefu.activitytracker.R
-import ru.fefu.activitytracker.Screens.Tracker.ActivityMyTrackerFragment
-import ru.fefu.activitytracker.Screens.Tracker.ActivityTabs
-import ru.fefu.activitytracker.Screens.Tracker.NewActivityFragment
-import ru.fefu.activitytracker.Screens.Tracker.ProfileFragment
+import ru.fefu.activitytracker.Screens.Tracker.Profile.ProfileFragment
 import ru.fefu.activitytracker.databinding.ActivityLayoutBinding
-import java.io.File
 
 data class FragmentInfo (
     val buttonId: Int,

@@ -1,4 +1,4 @@
-package ru.fefu.activitytracker.Screens.Tracker
+package ru.fefu.activitytracker.Screens.Tracker.Profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -34,7 +34,10 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (savedInstanceState == null) {
             childFragmentManager.beginTransaction().apply {
-                add(R.id.profile_fragment_container, ProfileViewFragment.newInstance(), ProfileViewFragment.tag)
+                add(R.id.profile_fragment_container,
+                    ProfileViewFragment.newInstance(),
+                    ProfileViewFragment.tag
+                )
                 commit()
             }
         }

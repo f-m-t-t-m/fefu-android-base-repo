@@ -9,6 +9,7 @@ import ru.fefu.activitytracker.Adapters.ActivityListAdapter
 import ru.fefu.activitytracker.Models.ActivityData
 import ru.fefu.activitytracker.databinding.MyActivityDetailsBinding
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 class MyActivityInfo(private val info: ActivityData): Fragment() {
@@ -41,7 +42,7 @@ class MyActivityInfo(private val info: ActivityData): Fragment() {
         binding.startTime.text = startTime
         binding.finishTime.text = endTime
 
-        if (LocalDateTime.now().equals(info.endDate)) {
+        if (LocalDate.now().equals(info.endDate.toLocalDate())) {
             binding.date.text = Duration.between(info.endDate, LocalDateTime.now()).toHours().toString() +
                     ActivityListAdapter.getNoun(
                         Duration.between(

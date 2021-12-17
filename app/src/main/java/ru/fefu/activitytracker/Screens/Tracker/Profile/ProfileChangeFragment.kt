@@ -1,4 +1,4 @@
-package ru.fefu.activitytracker.Screens.Tracker
+package ru.fefu.activitytracker.Screens.Tracker.Profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ class ProfileChangeFragment: Fragment() {
     private val binding get() = _binding!!
 
     companion object {
-        fun newInstance(): ProfileChangeFragment{
+        fun newInstance(): ProfileChangeFragment {
             return ProfileChangeFragment()
         }
         const val tag = "profile_change"
