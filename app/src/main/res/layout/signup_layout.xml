@@ -63,6 +63,7 @@
                 app:layout_constraintTop_toBottomOf="@id/textSignUP">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/login_txt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
@@ -120,26 +121,29 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:fontFamily="sans-serif"
                     android:hint="Имя или никнейм" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/gender"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingTop="10dp"
                 app:layout_constraintEnd_toStartOf="@id/guideline1"
                 app:layout_constraintStart_toStartOf="@+id/guideline2"
-                app:layout_constraintTop_toBottomOf="@id/nickname">
+                app:layout_constraintTop_toBottomOf="@id/nickname"
+                android:layout_marginTop="10dp"
+                android:hint="Пол">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <AutoCompleteTextView
+                    android:id="@+id/autoComplete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:hint="Пол" />
+                    android:inputType="none"
+                    />
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton

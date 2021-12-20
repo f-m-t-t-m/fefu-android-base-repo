@@ -20,16 +20,17 @@
         android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.Activity">
         <activity
-            android:name=".Screens.Tracker.Activity"
+            android:name=".Screens.WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Screens.WelcomeActivity" />
-        <activity android:name=".Screens.SignUpActivity" />
-        <activity android:name=".Screens.LoginActivity" />
+<!--        <activity android:name=".Screens.WelcomeActivity" />-->
+        <activity android:name=".Screens.SignUp.SignUpActivity" />
+        <activity android:name=".Screens.Login.LoginActivity" />
+        <activity android:name=".Screens.Tracker.Activity"/>
         <service android:name=".Screens.Tracker.TrackerService" />
     </application>
 
